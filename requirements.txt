@@ -1,0 +1,2 @@
+# Root requirements mirror backend requirements for convenience
+-r backend/Requirements.txt

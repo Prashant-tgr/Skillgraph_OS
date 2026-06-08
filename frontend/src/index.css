@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  /* Deep, premium dark background (Slate 950) */
+  background-color: #020617; 
+  /* Crisp white/gray text */
+  color: #f8fafc; 
+  /* Tells the browser to use dark scrollbars */
+  color-scheme: dark; 
+}
+
+/* Optional: Custom scrollbar for a polished look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

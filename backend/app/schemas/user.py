@@ -1,0 +1,16 @@
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    current_goal_id: Optional[int] = None
+
+class UserCreate(UserBase):
+    password: str
+
+class UserResponse(UserBase):
+    id: int
+    
+    class Config:
+        from_attributes = True

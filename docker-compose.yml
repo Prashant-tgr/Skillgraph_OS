@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: appdb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d appdb"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://app_user:changeme@db:5432/appdb
+      GROQ_API_KEY: ""
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:
