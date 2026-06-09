@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 import json
+import traceback
 
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_groq import ChatGroq
 import os
 
@@ -20,41 +21,55 @@ class PathRequest(BaseModel):
 
 @router.post("/generate-dynamic")
 async def generate_dynamic_path(req: PathRequest):
-    prompt_template = """
-    You are an expert AI curriculum designer. Create a highly personalized learning path for the following user:
-    - Goal: {goal}
-    - Learning Style: {learning_style}
-    - Time Available: {time_constraint}
+    
+    try:
+        
+        prompt_template = """  You are an expert AI curriculum designer. Create a highly personalized learning path for the following user:
+        - Goal: {goal}
+        - Learning Style: {learning_style}
+        - Time Available: {time_constraint}
 
-    You must break the goal down into a Directed Acyclic Graph (DAG) of logical learning steps.
-    Adjust the number of steps and the descriptions based on their time constraint and learning style.
-    
-    Output strictly in this JSON format without any markdown wrappers:
-    {{
-      "nodes": [
-        {{"id": "1", "title": "Concept Name", "description": "Tailored to their style", "difficulty": "Beginner"}}
-      ],
-      "edges": [
-        {{"source": "1", "target": "2"}}
-      ]
-    }}
-    """
-    
-    prompt = PromptTemplate(
-        input_variables=["goal", "learning_style", "time_constraint"],
-        template=prompt_template
-    )
-    
-    chain = prompt | llm
-    
-    # Run the LLM
-    response = chain.invoke({
-        "goal": req.goal, 
-        "learning_style": req.learning_style, 
-        "time_constraint": req.time_constraint
-    })
-    
-    # Parse the LLM output into standard JSON for React Flow
-    graph_data = json.loads(response.content)
-    
-    return graph_data
+        You must break the goal down into a Directed Acyclic Graph (DAG) of logical learning steps.
+        Adjust the number of steps and the descriptions based on their time constraint and learning style.
+        
+        Output strictly in this JSON format without any markdown wrappers:
+        {{
+          "nodes": [
+            {{"id": "1", "title": "Concept Name", "description": "Tailored to their style", "difficulty": "Beginner"}}
+          ],
+          "edges": [
+            {{"source": "1", "target": "2"}}
+          ]
+        }}
+        """
+        
+        prompt = PromptTemplate(
+            input_variables=["goal", "learning_style", "time_constraint"],
+            template=prompt_template
+        )
+        
+        chain = prompt | llm
+        
+        # Run the LLM
+        response = chain.invoke({
+            "goal": req.goal, 
+            "learning_style": req.learning_style, 
+            "time_constraint": req.time_constraint
+        })
+        
+        # Parse the LLM output into standard JSON for React Flow
+        raw_text = response.content.strip()
+
+        if "```json" in raw_text:
+            raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in raw_text:
+            raw_text = raw_text.split("```")[1].split("```")[0].strip()
+
+        graph_data = json.loads(raw_text)
+        
+        return graph_data
+   
+    except Exception as e:
+
+        traceback.print_exc()
+        raise
