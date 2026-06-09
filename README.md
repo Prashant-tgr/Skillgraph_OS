@@ -1,4 +1,4 @@
-# Autonomous Learning Path — Overview & Concepts
+# Autonomous Learning Path — Overview & Concepts  [🔗](https://skillgraph-os.vercel.app/)
 
 This repository implements an adaptive learning path engine (Skillgraph) with a FastAPI backend and a lightweight frontend. It demonstrates core techniques used in modern AI-enabled learning systems: multi-agent orchestration, retrieval-augmented generation (RAG), and directed acyclic graph (DAG) path planning.
 
