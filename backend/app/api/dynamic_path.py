@@ -1,12 +1,17 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 import json
-# Assuming you have LangChain and an LLM setup (OpenAI, Gemini, Mistral, etc.)
+
 from langchain.prompts import PromptTemplate
-from langchain.chat_models import ChatOpenAI 
+from langchain_google_genai import ChatGoogleGenerativeAI
+import os
 
 router = APIRouter()
-llm = ChatOpenAI(temperature=0.2, model_name="gpt-4-turbo") # Or your preferred model
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    google_api_key=os.getenv("GOOGLE_API_KEY"),
+    temperature=0.2
+)
 
 class PathRequest(BaseModel):
     goal: str
