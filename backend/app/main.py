@@ -40,7 +40,7 @@ if _LLM_AVAILABLE:
     try:
         llm = ChatGroq(
             temperature=0.2,
-            model_name="llama-3.3-70b-versatile",
+            model_name="openai/gpt-oss-120b",
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
     except Exception:
